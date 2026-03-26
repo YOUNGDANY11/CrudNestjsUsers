@@ -1,6 +1,6 @@
 import { IsEmail, IsString, MinLength } from "class-validator"
 
-export class CreateUserDto{
+export class RegisterDto {
     @IsString({message:'Es requerido el nombre'})
     @MinLength(2,{message:'El nombre debe tener almenos 2 caracteres'})
     name:string

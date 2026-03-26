@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './users.entity';
 import { Repository } from 'typeorm';
-import { plainToInstance } from 'class-transformer';
+import { Exclude, plainToInstance } from 'class-transformer';
 import { CreateUserDto, ResponseUserDto, UpdateUserDto } from './dto';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class UsersService {
     ){}
 
 
-    private async existsEmail(email:string){
+    async existsEmail(email:string){
         const existsEmail = await this.userRepository.findOneBy({email})
         if(existsEmail) throw new ConflictException({status:'Error',mensaje:'Ya esta registrado este correo con otro usuario'})
     }
@@ -50,6 +50,20 @@ export class UsersService {
                 status:'Success',
                 mensaje:'Consulta exitosa',
                 user: plainToInstance(ResponseUserDto,user)
+            }
+        }catch(error){
+            throw error
+        }
+    }
+
+    async findEmail(email:string){
+        try{
+            const user = await this.userRepository.findOneBy({email})
+            if(!user) throw new NotFoundException({status:'Error',mensaje:'No existe un usuario con este correo'})
+            return{
+                status:'Success',
+                mensaje:'Consulta exitosa',
+                user
             }
         }catch(error){
             throw error
